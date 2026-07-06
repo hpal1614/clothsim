@@ -1,0 +1,213 @@
+/*
+  Liquid-Glass-inspired system, kept to Apple's actual constraints:
+  - one primary glass sheet per view (the panel below), not glass-on-glass
+  - tint reserved for the single primary action (quick-add submit)
+  - text sits on a near-opaque scrim so contrast holds at ~4.5:1 regardless
+    of the --glass-tint slider value
+*/
+
+:root {
+  --glass-tint: 0.35; /* 0 = clearest, 1 = most tinted; driven by the a11y slider */
+  --accent: 100, 140, 255;
+}
+
+.glass-panel {
+  background: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, calc(0.10 + var(--glass-tint) * 0.08)),
+    rgba(255, 255, 255, calc(0.04 + var(--glass-tint) * 0.03))
+  );
+  backdrop-filter: blur(28px) saturate(calc(140% + var(--glass-tint) * 60%));
+  -webkit-backdrop-filter: blur(28px) saturate(calc(140% + var(--glass-tint) * 60%));
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 24px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  padding: 28px;
+  position: relative;
+  overflow: visible;
+  isolation: isolate;
+}
+
+.glass-panel + .glass-panel {
+  margin-top: 20px;
+}
+
+.app-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.app-header h1 {
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.app-header .date {
+  font-size: 13px;
+  color: rgba(245, 245, 247, 0.6);
+}
+
+.quick-add {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+
+.quick-add input {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  padding: 11px 14px;
+  color: #f5f5f7;
+  font-size: 14px;
+  outline: none;
+}
+
+.quick-add input::placeholder {
+  color: rgba(245, 245, 247, 0.45);
+}
+
+.quick-add input:focus {
+  border-color: rgba(var(--accent), 0.7);
+}
+
+.quick-add button {
+  background: rgba(var(--accent), calc(0.55 + var(--glass-tint) * 0.25));
+  border: 1px solid rgba(var(--accent), 0.6);
+  border-radius: 12px;
+  padding: 0 18px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.quick-add button:hover {
+  background: rgba(var(--accent), calc(0.7 + var(--glass-tint) * 0.25));
+}
+
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.task-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  min-height: 44px;
+}
+
+.task-row.tearing {
+  visibility: hidden;
+}
+
+.task-checkbox {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.55);
+  background: transparent;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.task-checkbox:hover {
+  border-color: rgb(var(--accent));
+  background: rgba(var(--accent), 0.25);
+}
+
+.task-title {
+  flex: 1;
+  font-size: 14.5px;
+  /* Solid, near-opaque text color regardless of tint slider — keeps contrast well above 4.5:1. */
+  color: #f5f5f7;
+}
+
+.task-due {
+  font-size: 12px;
+  color: rgba(245, 245, 247, 0.55);
+}
+
+.task-remove {
+  background: none;
+  border: none;
+  color: rgba(245, 245, 247, 0.4);
+  font-size: 16px;
+  line-height: 1;
+  padding: 4px;
+}
+
+.task-remove:hover {
+  color: rgba(245, 245, 247, 0.85);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 24px 0;
+  color: rgba(245, 245, 247, 0.5);
+  font-size: 14px;
+}
+
+.upcoming-group {
+  margin-bottom: 14px;
+}
+
+.upcoming-group:last-child {
+  margin-bottom: 0;
+}
+
+.upcoming-group h3 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: rgba(245, 245, 247, 0.5);
+  margin: 0 0 8px;
+  font-weight: 600;
+}
+
+.glass-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+  font-size: 12px;
+  color: rgba(245, 245, 247, 0.55);
+}
+
+.glass-slider-row input[type="range"] {
+  flex: 1;
+  accent-color: rgb(var(--accent));
+}
+
+.nav-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.nav-tabs button {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(245, 245, 247, 0.65);
+  border-radius: 10px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.nav-tabs button.active {
+  background: rgba(var(--accent), 0.5);
+  border-color: rgba(var(--accent), 0.6);
+  color: #fff;
+}

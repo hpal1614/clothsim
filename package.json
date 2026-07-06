@@ -1,0 +1,18 @@
+{
+  "name": "clothsim",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "chrono-node": "^2.7.7",
+    "three": "^0.169.0"
+  },
+  "devDependencies": {
+    "vite": "^6.3.5"
+  }
+}
