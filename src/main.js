@@ -30,6 +30,19 @@ function taskRowHtml(task) {
   `;
 }
 
+function emptyStateHtml(heading, sub) {
+  return `
+    <div class="empty-state">
+      <svg class="empty-state-glyph" width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+        <path d="M2 20c4-6 8 6 12 0s8-6 12 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+        <circle cx="2" cy="20" r="1.6" fill="currentColor" />
+      </svg>
+      <p class="empty-state-heading">${heading}</p>
+      <p class="empty-state-sub">${sub}</p>
+    </div>
+  `;
+}
+
 function escapeHtml(str) {
   const div = document.createElement("div");
   div.textContent = str;
@@ -40,11 +53,14 @@ function renderToday() {
   const tasks = store.today();
   const list = tasks.length
     ? `<ul class="task-list">${tasks.map(taskRowHtml).join("")}</ul>`
-    : `<div class="empty-state">Nothing due today. Add something above, or enjoy the quiet.</div>`;
+    : emptyStateHtml("Nothing due today.", "Add something above, or enjoy the quiet.");
 
   return `
     <div class="quick-add">
-      <input type="text" id="quick-add-input" placeholder="Call dentist tomorrow 3pm, or stretch daily…" />
+      <div class="quick-add-field">
+        <input type="text" id="quick-add-input" placeholder="Call dentist tomorrow 3pm, or stretch daily…" />
+        <kbd class="kbd-hint">/</kbd>
+      </div>
       <button id="quick-add-submit">Add</button>
     </div>
     ${list}
@@ -54,7 +70,7 @@ function renderToday() {
 function renderUpcoming() {
   const groups = store.upcoming();
   if (groups.size === 0) {
-    return `<div class="empty-state">Nothing scheduled ahead yet.</div>`;
+    return emptyStateHtml("Nothing scheduled ahead yet.", "Tasks with a future date will collect here.");
   }
   let html = "";
   for (const [dateKey, tasks] of groups) {
@@ -161,6 +177,22 @@ function attachEvents() {
 store.onChange(() => {
   // Store already re-rendered synchronously by callers after mutating;
   // this covers any future external mutation source.
+});
+
+document.addEventListener("keydown", (e) => {
+  const input = document.getElementById("quick-add-input");
+  if (!input) return;
+
+  if (e.key === "/" && document.activeElement !== input) {
+    e.preventDefault();
+    input.focus();
+    return;
+  }
+
+  if (e.key === "Escape" && document.activeElement === input) {
+    if (input.value) input.value = "";
+    else input.blur();
+  }
 });
 
 render();

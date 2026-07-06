@@ -58,12 +58,17 @@
   margin-bottom: 22px;
 }
 
-.quick-add input {
+.quick-add-field {
+  position: relative;
   flex: 1;
+}
+
+.quick-add input {
+  width: 100%;
   background: rgba(0, 0, 0, 0.25);
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 12px;
-  padding: 11px 14px;
+  padding: 11px 34px 11px 14px;
   color: #f5f5f7;
   font-size: 14px;
   outline: none;
@@ -75,6 +80,26 @@
 
 .quick-add input:focus {
   border-color: rgba(var(--accent), 0.7);
+}
+
+.kbd-hint {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: ui-monospace, monospace;
+  font-size: 11px;
+  color: rgba(245, 245, 247, 0.5);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 5px;
+  padding: 1px 6px;
+  pointer-events: none;
+}
+
+.quick-add-field:focus-within .kbd-hint,
+.quick-add-field:has(input:not(:placeholder-shown)) .kbd-hint {
+  display: none;
 }
 
 .quick-add button {
@@ -154,9 +179,24 @@
 
 .empty-state {
   text-align: center;
-  padding: 24px 0;
-  color: rgba(245, 245, 247, 0.5);
+  padding: 28px 0 20px;
+  color: rgba(245, 245, 247, 0.6);
   font-size: 14px;
+}
+
+.empty-state-glyph {
+  color: rgba(var(--accent), 0.55);
+  margin-bottom: 10px;
+}
+
+.empty-state-heading {
+  margin: 0;
+}
+
+.empty-state-sub {
+  margin: 4px 0 0;
+  font-size: 12.5px;
+  color: rgba(245, 245, 247, 0.4);
 }
 
 .upcoming-group {
@@ -210,4 +250,10 @@
   background: rgba(var(--accent), 0.5);
   border-color: rgba(var(--accent), 0.6);
   color: #fff;
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid rgb(var(--accent));
+  outline-offset: 2px;
 }
