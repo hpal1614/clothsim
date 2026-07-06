@@ -1,17 +1,21 @@
 const STORAGE_KEY = "torn.tasks.v1";
 
 function load() {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) return [];
   try {
-    return JSON.parse(raw);
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
   } catch {
+    // Storage can be unavailable (sandboxed preview iframes, private mode) — fall back to session-only.
     return [];
   }
 }
 
 function save(tasks) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+  } catch {
+    // No-op if storage is unavailable; tasks still work for the current session.
+  }
 }
 
 function uid() {
