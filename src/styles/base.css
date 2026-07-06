@@ -15,7 +15,8 @@ body {
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  padding: 48px 20px;
+  align-items: center;
+  padding: 20px;
 }
 
 #app {
