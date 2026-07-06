@@ -9,15 +9,25 @@ const RECUR_WORDS = {
 };
 
 /**
- * Parses free text like "call dentist tomorrow 3pm" or "stretch daily"
- * into { title, due, recur }.
+ * Parses free text like "call dentist tomorrow 3pm #work" or
+ * "stretch daily #health" into { title, due, recur, project }.
  */
 export function parseTaskInput(text) {
   const trimmed = text.trim();
   if (!trimmed) return null;
 
+  let project = null;
+  let withoutTag = trimmed;
+  const tagMatch = withoutTag.match(/#([\w-]+)/);
+  if (tagMatch) {
+    project = tagMatch[1];
+    withoutTag = (withoutTag.slice(0, tagMatch.index) + withoutTag.slice(tagMatch.index + tagMatch[0].length))
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
   let recur = null;
-  let withoutRecur = trimmed;
+  let withoutRecur = withoutTag;
   for (const [phrase, kind] of Object.entries(RECUR_WORDS)) {
     const re = new RegExp(`\\b${phrase}\\b`, "i");
     if (re.test(withoutRecur)) {
@@ -45,5 +55,5 @@ export function parseTaskInput(text) {
   if (!title) title = withoutRecur.trim();
   if (!due && recur) due = Date.now();
 
-  return { title, due, recur };
+  return { title, due, recur, project };
 }

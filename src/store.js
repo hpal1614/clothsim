@@ -83,20 +83,22 @@ export class Store {
   }
 
   /** Tasks due today or overdue and not done. */
-  today() {
+  today(project = null) {
     const endOfToday = new Date();
     endOfToday.setHours(23, 59, 59, 999);
     return this.tasks
       .filter((t) => !t.done && (!t.due || t.due <= endOfToday.getTime()))
+      .filter((t) => !project || t.project === project)
       .sort((a, b) => (a.due ?? Infinity) - (b.due ?? Infinity));
   }
 
   /** Undone tasks due after today, grouped by date string. */
-  upcoming() {
+  upcoming(project = null) {
     const endOfToday = new Date();
     endOfToday.setHours(23, 59, 59, 999);
     const future = this.tasks
       .filter((t) => !t.done && t.due && t.due > endOfToday.getTime())
+      .filter((t) => !project || t.project === project)
       .sort((a, b) => a.due - b.due);
 
     const groups = new Map();
@@ -106,5 +108,35 @@ export class Store {
       groups.get(key).push(t);
     }
     return groups;
+  }
+
+  /** Distinct project tags across active (undone) tasks, in first-seen order. */
+  projects() {
+    const seen = [];
+    for (const t of this.tasks) {
+      if (!t.done && t.project && !seen.includes(t.project)) seen.push(t.project);
+    }
+    return seen;
+  }
+
+  /** Undone tasks due on the given calendar date. */
+  onDate(date) {
+    const key = date.toDateString();
+    return this.tasks
+      .filter((t) => !t.done && t.due && new Date(t.due).toDateString() === key)
+      .sort((a, b) => a.due - b.due);
+  }
+
+  /** Map of "day-of-month" -> undone task count for the given year/month (0-indexed month). */
+  monthCounts(year, month) {
+    const counts = new Map();
+    for (const t of this.tasks) {
+      if (t.done || !t.due) continue;
+      const d = new Date(t.due);
+      if (d.getFullYear() === year && d.getMonth() === month) {
+        counts.set(d.getDate(), (counts.get(d.getDate()) ?? 0) + 1);
+      }
+    }
+    return counts;
   }
 }
